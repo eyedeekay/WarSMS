@@ -31,6 +31,7 @@ To learn to use it, for now, read the code. It's pretty self explanatory. Most
 of the options are the same as for /usr/bin/mail. There are ways to use rc
 config files too.
 
+
 **THIS IS ENTIRELY UNTESTED** Given that all the laws are so fuzzy surrounding
 how these things can be used and the fact that I don't want to be a spammer, or
 you know, jail. Jail sounds really shitty. And a stupid way to respond to 
@@ -41,3 +42,5 @@ to spend time away from my cat so I'm playing it safe.
 
 **THIS VERSION IS DELIBERATELY DISABLED** A cursory reading of the code will
 allow you to enable it. It will remain so until I'm clear on the legal issues.
+Strictly speaking, I haven't created this tool yet. But it's 3 very essential
+lines of code away from working.
