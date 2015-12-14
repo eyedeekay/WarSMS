@@ -5,13 +5,13 @@ if [ -f "$@" ]; then
 fi
 
 WD=$(pwd)
-rm "$WD/numbermail"
-rm "$WD/warsms-fake-daemon.log"
 
 loop_sig(){
 	echo "waiting for emails from gateway"
 }
 daemon_manager(){
+	rm "$WD/numbermail"
+	rm "$WD/warsms-fake-daemon.log"
 	trap loop_sig SIGUSR1
 	REPLIES=""
 	TEST_TIMEOUT=0
@@ -25,7 +25,8 @@ daemon_manager(){
 			exit 1
 		fi
 		# call mail fetching program here. Left out for now.		
-
+		
+		EMAIL_DOMAINS="retrieve a list of email domains from mail in folder"
 		# Get domain part of return addresses of all replies
 		# Search list of sent probes for domain responses and track
 		# remaining possible carriers
