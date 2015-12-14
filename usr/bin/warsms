@@ -57,6 +57,10 @@ case $key in
 	PHONE_NUMBER=" $2 "
 	shift # past argument
 	;;
+	-m)
+	EMAIL_MESSAGE=" $2 "
+	shift # past argument
+	;;
 	-a)
 	WARSMSRC_HEADER=" -a $2 "
 	shift # past argument

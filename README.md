@@ -34,7 +34,7 @@ config files too.
 **THIS IS ENTIRELY UNTESTED** Given that all the laws are so fuzzy surrounding
 how these things can be used and the fact that I don't want to be a spammer, or
 you know, jail. Jail sounds really shitty. And a stupid way to respond to 
-legitimate experimentation, I might add. Until it's tested, this is just an
+legitimate experimentation, I might add. Until it's tested, this is just a
 mildly elaborate hypothesis. I've never run this script, not once, because I'm
 not a lawyer and I'm not sure who I'd annoy if I did. I'm poor and I don't want
 to spend time away from my cat so I'm playing it safe.

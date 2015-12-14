@@ -13,6 +13,7 @@ RETURN_EMAIL="example@example.com"
 RETURN_PASSWORD="empty_example_password"
 SEND_PROT="smtp"
 RECV_PROT="pop"
+EMAIL_MESSAGE="This is s test message. Your carrier may have been determined. Please visit github.com/cmotc/warsms for more details."
 WARSMSRC_SUBJECT="carrier determination"
 WARSMSRC_HEADER=""
 WARSMSRC_BCC_ADDR=""
@@ -50,6 +51,10 @@ key="$1"
 case $key in
 	-a)
 	WARSMSRC_HEADER="-a $2"
+	shift # past argument
+	;;
+	-m)
+	EMAIL_MESSAGE=" $2 "
 	shift # past argument
 	;;
 	-b)
@@ -104,20 +109,28 @@ shift # past argument or value
 done
 
 ##Interactive Interpretation of necessary options
-if [ $RETURN_EMAIL == "example@example.com" ]; then
+if [ "$RETURN_EMAIL" == "example@example.com" ]; then
 	echo "Return email has not been set."
 	read RETURN_EMAIL
 fi
-if [ $RETURN_PASSWORD == "empty_example_password" ]; then
+if [ "$RETURN_PASSWORD" == "empty_example_password" ]; then
 	echo "Return email has not been set."
 	read RETURN_PASSWORD
 fi
-if [ $WARSMSRC_SUBJECT == "carrier determination" ]; then
+if [ "$WARSMSRC_SUBJECT" == "carrier determination" ]; then
 	echo "Enter a subject if you want. If left blank, carrier determination
-wll be used."
+will be used."
 	read TMP_SUBJECT
 	if [ ! "$TMP_SUBJECT" == "" ]; then
 		WARSMSRC_PROJECT="$TMP_SUBJECT"
+	fi
+fi
+if [ "$EMAIL_MESSAGE" == "This is s test message. Your carrier may have been determined. Please visit github.com/cmotc/warsms for more details." ]; then
+	echo "Enter a message if you want. If left blank, a default message will
+	will be used."
+	read TMP_MESSAGE
+	if [ ! "$TMP_MESSAGE" == "" ]; then
+		WARSMSRC_PROJECT="$TMP_MESSAGE"
 	fi
 fi
 
