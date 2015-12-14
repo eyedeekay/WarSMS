@@ -15,4 +15,5 @@ Special SMS Support?:
 It would be very useful to be able to send Type-0 SMS Messages thereby eliciting
 an automatic response which could be used in lieu of process-of-elimination.
 I'm not remotely sure it's possible to trick a phone into thinking an sms from
-a gateway is a Ping SMS but if it is it would be useful.
+a gateway is a Ping SMS but if it is it would be useful. Definitely taking it
+into misuse territory here.
