@@ -1,0 +1,24 @@
+#! /bin/sh
+
+if [ -f "$@" ]; then
+	. "$@"
+fi
+loop_sig(){
+	echo "waiting for emails from gateway"
+}
+daemon_manager(){
+	trap loop_sig SIGUSR1
+	REPLIES=""
+	TEST_TIMEOUT=0
+	while [ $REPLIES < $WARSMS_EMAIL_ARRAY_SIZE ]; do
+		sleep 60
+		TEST_TIMEOUT=$(($TEST_TIMEOUT+60))
+		if [ $TEST_TIMEOUT > $(($TIMEOUT*60)) ]; then
+			exit 1
+		fi
+		
+	done
+
+}
+
+nohup daemon_manager 0<&- &> ./warsms.log &

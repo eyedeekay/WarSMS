@@ -1,0 +1,207 @@
+#! /bin/sh
+echo "
++==============================================================================+
+{     ##%%XXxx.. WarSMS - Determine SMS carrier by Phone Number ..xxXX%%##     }
+}------------------------------------------------------------------------------{
+{      Please don't use this program to do anything illegal, or creepy, or     }
+{    even unduly inconvenience an incumbent telecom. That would be wrong.      }
+{    Don't stalk anyone, don't use it to send spam or mass texts or spend      }
+{    people's minutes or whatever. Be considerate dammit, and don't get me     }
+{    in trouble. This tool is intended only for educational and legitimate     }
+{    security assessments/research only. Depending on what I can get an email  }
+{    to SMS gatway to do in the future this could get creepy kinda fast.       }
+}------------------------------------------------------------------------------{
+{              Credits: https://github.com/cubiclesoft/email_sms_mms_gateways  }
+{                        (Default email-to-sms gateway list from this db)      }
+{                    I don't know maybe all the very basic software present in }
+{                        literally every operating system that makes this      }
+{                          possible.                                           }
++==============================================================================+
+{   Licensed under the zlib license. You should have recieved a copy of the    }
+{   LICENSE file with this copy of the program. If you did not, you can find   }
+{   a copy here. https://github.com/cmotc/warsms/blob/master/LICENSE           }
++===============================================================================
+"
+export HELP=""
+SUBJECT="test"
+EMAIL_MESSAGE="This is s test message. Your carrier may have been determined. Please visit github.com/cmotc/warsms for more details."
+# Read in config options or prompt for required options
+echo "Loading config file(Will look under the working directory at ./warsmsrc
+./.warsmsrc, under the home directory at \$HOME/.config/warsms/warsmsrc, and 
+in the system directories /usr/local/share/warsms/, /usr/share/warsms/ in that 
+order. So put it in any of those places, and it'll pick the one it finds first.
+A non-functional example config is provided in /etc/warsmsrc, if no warsmsrc is
+found the user will be prompted for the necessary information to recieve email
+responses."
+if [ -f "./warsmsrc" ]; then
+	WARSMSRC_PATH="./warsmsrc"
+	. "./warsmsrc"
+elif [ -f "./.warsmsrc" ]; then
+	WARSMSRC_PATH="./.warsmsrc"
+	. "./.warsmsrc"
+elif [ -f "$HOME/.warsmsrc" ]; then
+	WARSMSRC_PATH="$HOME/.warsmsrc"
+	. "$HOME/.warsmsrc"
+elif [ -f "$HOME/.config/warsmsrc" ]; then
+	WARSMSRC_PATH="$HOME/.config/warsmsrc"
+	. "$HOME/.config/warsmsrc"
+else [ -f "/etc/warsmsrc" ]; then
+	export WD=$(pwd)
+	. "/etc/warsmsrc" 
+fi
+if [ $TMP_WARSMSRC == "" ]; then
+while [[ $# > 0 ]]; do
+key="$1"
+case $key in
+	-a)
+	WARSMSRC_HEADER="-a $2"
+	shift # past argument
+	;;
+	-b)
+	WARSMSRC_BCC_ADDR="-b $2"
+	shift # past argument
+	;;
+	-c)
+	WARSMSRC_CC_ADDR="-c $2"
+	shift # past argument
+	;;
+	-s)
+	WARSMSRC_SUBJECT="-s $2"
+	shift # past argument
+	;;
+	-f)
+	WARSMSRC_MAILFILE="-f $2"
+	shift # past argument
+	;;
+	-u)
+	WARSMSRC_USER="-u $2"
+	shift # past argument
+	;;
+	-i)
+	WARSMSRC_INTERRUPT="-i"  #    shift # past argument
+	;;
+	-N)
+	WARSMSRC_NODISPLAYHEADERS="-N" #    shift # past argument
+	;;
+	-n)
+	WARSMSRC_NOMAILRC="-n" #    shift # past argument
+	;;
+	-y)
+	WARSMSRC_NOMAILRC="" #    shift # past argument
+	;;
+	-v)
+	WARSMSRC_VERBOSE="-v" #    shift # past argument
+	;;
+	-d)
+	WARSMSRC_DEBUG="-d" #    shift # past argument
+	;;
+	-E)
+	WARSMSRC_NOEMPTY="-E" #    shift # past argument
+	;;
+	-h|--help)
+		echo $HELP; exit 0
+	;;
+	*)
+	        # unknown option
+	;;
+esac
+shift # past argument or value
+done
+fi
+read
+print_country_pair(){
+	countrycode=$(echo "$1" | tr ":" "\n")
+	echo -n "$countrycode[2]($countrycode[1]), "
+}
+gateway_json_to_sh(){
+	nonewlines=$(echo "$1" | tr "\n" "")
+	echo "$nonewlines" | tr "," "\n"
+	echo "$nonewlines" | grep -i -o '[A-Z0-9._%+-]\+@[A-Z0-9.-]\+\.[A-Z]\{2,4\}' 
+}
+print_email_address(){
+	number=$(echo "$1" | tr -d " " "")
+	domain=$(echo "$2" | tr -d " " "")
+	echo -n "$number@$domain"
+}
+clear
+# Read in table of SMS gateways
+echo "
+Finding SMS gateway table
+(Will look under the working directory at ./usr/share/warsms/, ./warsms.json, 
+\$HOME/.config/warsms, and  /usr/local/share/warsms/, /usr/share/warsms/.
+in that order. So put it in any of those places, and it'll use the one it finds
+first. A default list is provided in /usr/share/warsms/.
+"
+GATEWAY_LIST_PATH=""
+if [ -f "./usr/share/warsms/sms_mms_gateways.json" ]; then
+	GATEWAY_LIST_PATH="./usr/share/warsms/sms_mms_gateways.json" 
+elif [ -f "./warsms.json" ]; then
+	GATEWAY_LIST_PATH="./warsms.json"
+elif [ -f "$HOME/.config/warsms/sms_mms_gateways.json" ]; then
+	GATEWAY_LIST_PATH="$HOME/.config/warsms/sms_mms_gateways.json"
+elif [ -f "/usr/local/share/warsms/sms_mms_gateways.json" ]; then
+	GATEWAY_LIST_PATH="/usr/local/share/warsms/sms_mms_gateways.json"
+elif [ -f "/usr/share/warsms/sms_mms_gateways.json" ]; then
+	GATEWAY_LIST_PATH="/usr/share/warsms/sms_mms_gateways.json"
+fi
+echo "
+Gateway list found in $GATEWAY_LIST_PATH
+Loading SMS gateway table...
+"
+clear
+GATEWAY_LIST=$(cat "$GATEWAY_LIST_PATH" | jq ".countries")
+# Read in country
+echo "This gateway list contains gateways from the following countries: "
+for line in $GATEWAY_LIST; do
+	print_country_pair($line)
+done
+echo "Input the country where the phone is from."
+read COUNTRY_ID
+COUNTRY_PAIR=$(cat "$GATEWAY_LIST_PATH" | jq ".countries.$COUNTRY_ID")
+# Read in phone number
+echo "Input the cell number who's carrier you want to identify."
+read PHONE_NUMBER
+COUNTRY_EMAIL_ARRAY=$(gateway_json_to_sh $(cat "./sms_mms_gateways.json" | jq ".sms_carriers.$COUNTRY_ID"))
+export WARSMS_EMAIL_ARRAY_SIZE=${#COUNTRY_EMAIL_ARRAY[@]}
+for domain in $COUNTRY_EMAIL_ARRAY; do
+	EMAIL_ADDRESS=$(print_email_address $PHONE_NUMBER $domain)
+	# Craft an email message
+	# Send email to phonenumber@gatewayaddresses
+	if [ ! $TMP_WARSMSRC == "" ]; then
+		echo "$EMAIL_MESSAGE" | mail -s "$WARSMSRC_HEADER" \
+		 "$WARSMSRC_BCC_ADDR" \
+		 "$WARSMSRC_CC_ADDR" \
+		 "$WARSMSRC_SUBJECT" \
+		 "$WARSMSRC_TO_ADDR" \
+		 "$WARSMSRC_MAILFILE" \
+		 "$WARSMSRC_USER" \
+		 "$WARSMSRC_INTERRUPT" \
+		 "$WARSMSRC_NODISPLAYHEADERS" \
+		 "$WARSMSRC_NOMAILRC" \
+		 "$WARSMSRC_VERBOSE" \
+		 "$WARSMSRC_DEBUG" \
+		 "$WARSMSRC_NOEMPTY $EMAIL_ADDRESS"
+	else
+		 echo "$EMAIL_MESSAGE" | mail -s "$TMP_WARSMSRC $EMAIL_ADDRESS"
+	fi
+done
+# Create a folder for responses
+mkdir -p "$COUNTRY_PAIR/$PHONE_NUMBER"
+cd "$COUNTRY_PAIR/$PHONE_NUMBER"
+# Store the responses by running the warsms-fake-daemon until they are all 
+# gathered.
+if [ ! "$TMP_WARSMSRC" == "" ]; then
+	warsms_fake_daemon "$TMP_WARSMSRC " " $RETURN_WARSMSRC"
+else
+	warsms-fake-daemon "$WARSMSRC_PATH"
+fi
+clear
+# Inform the user of the location of fake-daemon's output.
+echo "
+When the carrier has been determined or the daemon terminates, the log
+will be visible in $COUNTRY_PAIR/$PHONE_NUMBER/warsms-fake-daemon.log and the
+correct Email-to-SMS gateway address will be available at both 
+$COUNTRY_PAIR$PHONE_NUMBER.cache and $COUNTRY_PAIR/$PHONE_NUMBER/numbermail
+"
+read
+exit 0

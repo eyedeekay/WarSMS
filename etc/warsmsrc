@@ -1,0 +1,138 @@
+#! /bin/sh
+# WARNING! It is not recommended that you change this file. It is highly
+# recommended that you instead use a terminal option or a config file in the
+# working directory or home directory. This is because this file is also used
+# to interpret the arguments passed to the program. Strictly speaking it's
+# possible, and technically safe and not even hard, but try to know what you are
+# doing first. It's just a shell script. Please read it.
+
+##Example settings(Changing the RETURN_EMAIL or $RETURN_PASSWORD field will 
+##break interactive mode):
+
+RETURN_EMAIL="example@example.com"
+RETURN_PASSWORD="empty_example_password"
+SEND_PROT="smtp"
+RECV_PROT="pop"
+WARSMSRC_SUBJECT="carrier determination"
+WARSMSRC_HEADER=""
+WARSMSRC_BCC_ADDR=""
+WARSMSRC_CC_ADDR=""
+WARSMSRC_SUBJECT=""
+WARSMSRC_TO_ADDR=""
+WARSMSRC_MAILFILE=""
+WARSMSRC_USER=""
+WARSMSRC_INTERRUPT=""
+WARSMSRC_NODISPLAYHEADERS=""
+WARSMSRC_NOMAILRC=""
+WARSMSRC_NOMAILRC=""
+WARSMSRC_VERBOSE=""
+WARSMSRC_DEBUG=""
+WARSMSRC_NOEMPTY=""
+
+export TMP_WARSMSRC="true"
+##^If you're creating a local settings file you only need to copy the part above
+##this point.
+
+##If you want your emails to go through Tor, you can uncomment the following
+##line or copy-paste it into a local config. Requires torsocks.
+
+# . torsocks on
+
+##Argument interpretation(mail/fetchmail compatibility is intended):
+
+while [[ $# > 0 ]]; do
+key="$1"
+case $key in
+	-a)
+	WARSMSRC_HEADER="-a $2"
+	shift # past argument
+	;;
+	-b)
+	WARSMSRC_BCC_ADDR="-b $2"
+	shift # past argument
+	;;
+	-c)
+	WARSMSRC_CC_ADDR="-c $2"
+	shift # past argument
+	;;
+	-s)
+	WARSMSRC_SUBJECT="-s $2"
+	shift # past argument
+	;;
+	-f)
+	WARSMSRC_MAILFILE="-f $2"
+	shift # past argument
+	;;
+	-u)
+	WARSMSRC_USER="-u $2"
+	shift # past argument
+	;;
+	-i)
+	WARSMSRC_INTERRUPT="-i"  #    shift # past argument
+	;;
+	-N)
+	WARSMSRC_NODISPLAYHEADERS="-N" #    shift # past argument
+	;;
+	-n)
+	WARSMSRC_NOMAILRC="-n" #    shift # past argument
+	;;
+	-y)
+	WARSMSRC_NOMAILRC="" #    shift # past argument
+	;;
+	-v)
+	WARSMSRC_VERBOSE="-v" #    shift # past argument
+	;;
+	-d)
+	WARSMSRC_DEBUG="-d" #    shift # past argument
+	;;
+	-E)
+	WARSMSRC_NOEMPTY="-E" #    shift # past argument
+	;;
+	-h|--help)
+		echo $HELP; exit 0
+	;;
+	*)
+	        # unknown option
+	;;
+esac
+shift # past argument or value
+done
+
+##Interactive Interpretation of necessary options
+if [ $RETURN_EMAIL == "example@example.com" ]; then
+	echo "Return email has not been set."
+	read RETURN_EMAIL
+fi
+if [ $RETURN_PASSWORD == "empty_example_password" ]; then
+	echo "Return email has not been set."
+	read RETURN_PASSWORD
+fi
+if [ $WARSMSRC_SUBJECT == "carrier determination" ]; then
+	echo "Enter a subject if you want. If left blank, carrier determination
+wll be used."
+	read TMP_SUBJECT
+	if [ ! "$TMP_SUBJECT" == "" ]; then
+		WARSMSRC_PROJECT="$TMP_SUBJECT"
+	fi
+fi
+
+TMP_WARSMSRC="$WARSMSRC_HEADER \
+	 $WARSMSRC_BCC_ADDR \
+	 $WARSMSRC_CC_ADDR \
+	 $WARSMSRC_SUBJECT \
+	 $WARSMSRC_TO_ADDR \
+	 $WARSMSRC_MAILFILE \
+	 $WARSMSRC_USER \
+	 $WARSMSRC_INTERRUPT \
+	 $WARSMSRC_NODISPLAYHEADERS \
+	 $WARSMSRC_NOMAILRC \
+	 $WARSMSRC_VERBOSE \
+	 $WARSMSRC_DEBUG \
+	 $WARSMSRC_NOEMPTY "
+
+RETURN_WARSMSRC="$RETURN_EMAIL \
+	 $RETURN_PASSWORD \
+	 $SEND_PROT \
+	 $RECV_PROT \
+	 $TMP_WARSMSRC \
+	 $TIMEOUT "
