@@ -23,8 +23,14 @@ output the response to a folder where it will be stored, finally cacheing the
 correct gateway which will reveal the carrier and provide a channel for sending
 SMS and MMS messages to the device.
 
+To learn to use it, for now, read the code. It's pretty self explanatory. Most
+of the options are the same as for /usr/bin/mail. There are ways to use rc
+config files too.
+
 **THIS IS ENTIRELY UNTESTED** Given that all the laws are so fuzzy surrounding
-how these things can be used and the fact that I don't want to be a spammer,
-this is just an elaborate hypothesis. I've never run this script, not once,
-because I'm not a lawyer and I'm not sure who I'd annoy if I did. But I'm poor
-and I don't want to spend time away from my cat so I'm playing it safe.
+how these things can be used and the fact that I don't want to be a spammer, or
+you know, jail. Jail sounds really shitty. And a stupid way to respond to 
+legitimate experimentation, I might add. Until it's tested, this is just an
+mildly elaborate hypothesis. I've never run this script, not once, because I'm
+not a lawyer and I'm not sure who I'd annoy if I did. I'm poor and I don't want
+to spend time away from my cat so I'm playing it safe.
