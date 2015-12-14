@@ -3,6 +3,11 @@
 if [ -f "$@" ]; then
 	. "$@"
 fi
+
+WD=$(pwd)
+rm "$WD/numbermail"
+rm "$WD/warsms-fake-daemon.log"
+
 loop_sig(){
 	echo "waiting for emails from gateway"
 }
@@ -10,15 +15,29 @@ daemon_manager(){
 	trap loop_sig SIGUSR1
 	REPLIES=""
 	TEST_TIMEOUT=0
+	EMAIL_DOMAINS=""
+	# Listen until all replies are recieved
 	while [ $REPLIES < $WARSMS_EMAIL_ARRAY_SIZE ]; do
 		sleep 60
 		TEST_TIMEOUT=$(($TEST_TIMEOUT+60))
 		if [ $TEST_TIMEOUT > $(($TIMEOUT*60)) ]; then
+			echo "Timed out based on user parameter" >> "$WD/warsms-fake-daemon.log"
 			exit 1
 		fi
-		
-	done
+		# call mail fetching program here. Left out for now.		
 
+		# Get domain part of return addresses of all replies
+		# Search list of sent probes for domain responses and track
+		# remaining possible carriers
+		for domain in $EMAIL_DOMAINS; do
+			if [ ! [cat "$WD/probes.log" | grep $domain] ]; then
+				DIFF_EMAIL_DOMAINS="$DIFF_EMAIL_DOMAINS\n$PHONE_NUMBER@$DOMAIN"
+			fi
+			echo -e "$DIFF_EMAIL_DOMAINS" > "$WD/numbermail"
+		done
+	done
+	# copy final carrier list
+	cp "$WD/numbermail" "$WD/../../$COUNTRY_ID$PHONE_NUMBER.cache"
 }
 
 nohup daemon_manager 0<&- &> ./warsms.log &

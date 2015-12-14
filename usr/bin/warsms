@@ -53,50 +53,54 @@ if [ $TMP_WARSMSRC == "" ]; then
 while [[ $# > 0 ]]; do
 key="$1"
 case $key in
+	-p)
+	PHONE_NUMBER=" $2 "
+	shift # past argument
+	;;
 	-a)
-	WARSMSRC_HEADER="-a $2"
+	WARSMSRC_HEADER=" -a $2 "
 	shift # past argument
 	;;
 	-b)
-	WARSMSRC_BCC_ADDR="-b $2"
+	WARSMSRC_BCC_ADDR=" -b $2 "
 	shift # past argument
 	;;
 	-c)
-	WARSMSRC_CC_ADDR="-c $2"
+	WARSMSRC_CC_ADDR=" -c $2 "
 	shift # past argument
 	;;
 	-s)
-	WARSMSRC_SUBJECT="-s $2"
+	WARSMSRC_SUBJECT=" -s $2 "
 	shift # past argument
 	;;
 	-f)
-	WARSMSRC_MAILFILE="-f $2"
+	WARSMSRC_MAILFILE=" -f $2 "
 	shift # past argument
 	;;
 	-u)
-	WARSMSRC_USER="-u $2"
+	WARSMSRC_USER=" -u $2 "
 	shift # past argument
 	;;
 	-i)
-	WARSMSRC_INTERRUPT="-i"  #    shift # past argument
+	WARSMSRC_INTERRUPT=" -i "  #    shift # past argument
 	;;
 	-N)
-	WARSMSRC_NODISPLAYHEADERS="-N" #    shift # past argument
+	WARSMSRC_NODISPLAYHEADERS=" -N " #    shift # past argument
 	;;
 	-n)
-	WARSMSRC_NOMAILRC="-n" #    shift # past argument
+	WARSMSRC_NOMAILRC=" -n " #    shift # past argument
 	;;
 	-y)
-	WARSMSRC_NOMAILRC="" #    shift # past argument
+	WARSMSRC_NOMAILRC=" " #    shift # past argument
 	;;
 	-v)
-	WARSMSRC_VERBOSE="-v" #    shift # past argument
+	WARSMSRC_VERBOSE=" -v " #    shift # past argument
 	;;
 	-d)
-	WARSMSRC_DEBUG="-d" #    shift # past argument
+	WARSMSRC_DEBUG=" -d " #    shift # past argument
 	;;
 	-E)
-	WARSMSRC_NOEMPTY="-E" #    shift # past argument
+	WARSMSRC_NOEMPTY=" -E " #    shift # past argument
 	;;
 	-h|--help)
 		echo $HELP; exit 0
@@ -161,6 +165,11 @@ COUNTRY_PAIR=$(cat "$GATEWAY_LIST_PATH" | jq ".countries.$COUNTRY_ID")
 # Read in phone number
 echo "Input the cell number who's carrier you want to identify."
 read PHONE_NUMBER
+# Create a folder for responses
+rm -rf "$COUNTRY_ID/$PHONE_NUMBER"
+mkdir -p "$COUNTRY_ID/$PHONE_NUMBER"
+cd "$COUNTRY_ID/$PHONE_NUMBER"
+# Send the probe emails
 COUNTRY_EMAIL_ARRAY=$(gateway_json_to_sh $(cat "./sms_mms_gateways.json" | jq ".sms_carriers.$COUNTRY_ID"))
 export WARSMS_EMAIL_ARRAY_SIZE=${#COUNTRY_EMAIL_ARRAY[@]}
 for domain in $COUNTRY_EMAIL_ARRAY; do
@@ -181,13 +190,12 @@ for domain in $COUNTRY_EMAIL_ARRAY; do
 		 "$WARSMSRC_VERBOSE" \
 		 "$WARSMSRC_DEBUG" \
 		 "$WARSMSRC_NOEMPTY $EMAIL_ADDRESS"
+		 echo "$EMAIL_ADDRESS" >> "$COUNTRY_ID/$PHONE_NUMBER/probes.log"
 	else
 		 echo "$EMAIL_MESSAGE" | mail -s "$TMP_WARSMSRC $EMAIL_ADDRESS"
+		 echo "$EMAIL_ADDRESS" >> "$COUNTRY_ID/$PHONE_NUMBER/probes.log"
 	fi
 done
-# Create a folder for responses
-mkdir -p "$COUNTRY_PAIR/$PHONE_NUMBER"
-cd "$COUNTRY_PAIR/$PHONE_NUMBER"
 # Store the responses by running the warsms-fake-daemon until they are all 
 # gathered.
 if [ ! "$TMP_WARSMSRC" == "" ]; then
@@ -199,9 +207,9 @@ clear
 # Inform the user of the location of fake-daemon's output.
 echo "
 When the carrier has been determined or the daemon terminates, the log
-will be visible in $COUNTRY_PAIR/$PHONE_NUMBER/warsms-fake-daemon.log and the
+will be visible in $COUNTRY_ID/$PHONE_NUMBER/warsms-fake-daemon.log and the
 correct Email-to-SMS gateway address will be available at both 
-$COUNTRY_PAIR$PHONE_NUMBER.cache and $COUNTRY_PAIR/$PHONE_NUMBER/numbermail
+$COUNTRY_ID$PHONE_NUMBER.cache and $COUNTRY_ID/$PHONE_NUMBER/numbermail
 "
 read
 exit 0
