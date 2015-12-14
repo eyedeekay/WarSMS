@@ -7,7 +7,8 @@ First of all, it's a shell script, because it makes sense to write things like
 this as shell scripts on the platforms I use. That means unix for now, 
 obviously, but all these tools have equivalents on any usable platform in the 
 world today, so make a version that uses it, fork if necessary, and make it so
-people can pull off this cheap trick on any platform they want.
+people can pull off this cheap trick on any platform they want(assuming it's
+legal in your jurisdiction).
 
 Special SMS Support?:
 ---------------------

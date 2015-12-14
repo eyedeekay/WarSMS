@@ -6,7 +6,7 @@ SOURCEDMN=warsms-fake-daemon
 SOURCECONF=warsmsrc
 SOURCEDEF=sms_mms_gateways.json
 SOURCEDOC=README.md
-DEBFOLDER=grepemails
+DEBFOLDER=warsms
 DEBVERSION=$(date +%Y%m%d)
 
 cd $DEBFOLDER
