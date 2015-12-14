@@ -30,8 +30,13 @@ WARSMSRC_DEBUG=""
 WARSMSRC_NOEMPTY=""
 
 export TMP_WARSMSRC="true"
+
 ##^If you're creating a local settings file you only need to copy the part above
 ##this point.
+
+
+
+
 
 ##If you want your emails to go through Tor, you can uncomment the following
 ##line or copy-paste it into a local config. Requires torsocks.
