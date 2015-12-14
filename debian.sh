@@ -53,14 +53,15 @@ Priority: optional
 Maintainer: cmotc <cmotc@openmailbox.org>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.5
-Homepage: https://www.github.com/cmotc/grepemails
-#Vcs-Git: git@github.com:cmotc/grepemails
-#Vcs-Browser: https://www.github.com/cmotc/grepemails
+Homepage: https://www.github.com/cmotc/warsms
+#Vcs-Git: git@github.com:cmotc/warsms
+#Vcs-Browser: https://www.github.com/cmotc/warsms
 
 Package: $DEBFOLDER
 Architecture: all
-Depends: \${misc:Depends}
-Description: A simple script for extracting emails from a document or string
+Depends: mail, jq, \${misc:Depends}
+Description: A script for determining the carrier of a cell number by process
+ of elimination.
 " > debian/control
 
 #echo "gsettings set org.gnome.desktop.session session-name awesome-gnome
