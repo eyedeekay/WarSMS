@@ -49,8 +49,8 @@ else [ -f "/etc/warsmsrc" ]; then
 	export WD=$(pwd)
 	. "/etc/warsmsrc" 
 fi
-if [ $TMP_WARSMSRC == "" ]; then
-while [[ $# > 0 ]]; do
+if [ $TMP_WARSMSRC = "" ]; then
+while [ $# > 0 ]; do
 key="$1"
 case $key in
 	-p)
@@ -116,7 +116,7 @@ esac
 shift # past argument or value
 done
 fi
-read
+toss=read
 print_country_pair(){
 	countrycode=$(echo "$1" | tr ":" "\n")
 	echo -n "$countrycode[2]($countrycode[1]), "
@@ -175,12 +175,11 @@ mkdir -p "$COUNTRY_ID/$PHONE_NUMBER"
 cd "$COUNTRY_ID/$PHONE_NUMBER"
 # Send the probe emails
 COUNTRY_EMAIL_ARRAY=$(gateway_json_to_sh $(cat "./sms_mms_gateways.json" | jq ".sms_carriers.$COUNTRY_ID"))
-export WARSMS_EMAIL_ARRAY_SIZE=${#COUNTRY_EMAIL_ARRAY[@]}
 for domain in $COUNTRY_EMAIL_ARRAY; do
 	EMAIL_ADDRESS=$(print_email_address $PHONE_NUMBER $domain)
 	# Craft an email message
 	# Send email to phonenumber@gatewayaddresses
-	if [ ! $TMP_WARSMSRC == "" ]; then
+	if [ ! $TMP_WARSMSRC = "" ]; then
 		echo "$EMAIL_MESSAGE" | mail -s "$WARSMSRC_HEADER" \
 		 "$WARSMSRC_BCC_ADDR" \
 		 "$WARSMSRC_CC_ADDR" \
@@ -202,7 +201,7 @@ for domain in $COUNTRY_EMAIL_ARRAY; do
 done
 # Store the responses by running the warsms-fake-daemon until they are all 
 # gathered.
-if [ ! "$TMP_WARSMSRC" == "" ]; then
+if [ ! "$TMP_WARSMSRC" = "" ]; then
 	warsms_fake_daemon "$TMP_WARSMSRC " " $RETURN_WARSMSRC"
 else
 	warsms-fake-daemon "$WARSMSRC_PATH"
@@ -215,5 +214,5 @@ will be visible in $COUNTRY_ID/$PHONE_NUMBER/warsms-fake-daemon.log and the
 correct Email-to-SMS gateway address will be available at both 
 $COUNTRY_ID$PHONE_NUMBER.cache and $COUNTRY_ID/$PHONE_NUMBER/numbermail
 "
-read
+toss=read
 exit 0
