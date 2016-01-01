@@ -34,11 +34,11 @@ daemon_manager(){
 			if [ ! [cat "$WD/probes.log" | grep $domain] ]; then
 				DIFF_EMAIL_DOMAINS="$DIFF_EMAIL_DOMAINS\n$PHONE_NUMBER@$DOMAIN"
 			fi
-			echo -e "$DIFF_EMAIL_DOMAINS" > "$WD/numbermail"
+			$("$DIFF_EMAIL_DOMAINS") > "$WD/numbermail"
 		done
 	done
 	# copy final carrier list
 	cp "$WD/numbermail" "$WD/../../$COUNTRY_ID$PHONE_NUMBER.cache"
 }
 
-nohup daemon_manager 0<&- &> ./warsms.log &
+nohup daemon_manager 0<&- 2>&1 ./warsms.log &
