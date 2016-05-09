@@ -16,10 +16,9 @@ else
 fi
 cd $TOME
 
-git pull origin master
+#git pull origin master
 
 DEBFOLDERNAME="$TOME/../$DEBFOLDER-$DEBVERSION"
-DEBPACKAGENAME=$DEBFOLDER\_$DEBVERSION
 
 rm -rf $DEBFOLDERNAME
 # Create your scripts source dir
@@ -32,7 +31,7 @@ cd $DEBFOLDERNAME
 pwd
 
 # Create the packaging skeleton (debian/*)
-dh_make -s --indep --createorig 
+dh_make --indep --createorig 
 
 mkdir -p debian/tmp/usr
 cp -R usr debian/tmp/usr
