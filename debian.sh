@@ -20,9 +20,7 @@ cd $TOME
 
 DEBFOLDERNAME="$TOME/../$DEBFOLDER-$DEBVERSION"
 
-rm -rf $DEBFOLDERNAME
 # Create your scripts source dir
-mkdir $DEBFOLDERNAME
 
 # Copy your script to the source dir
 cp $TOME $DEBFOLDERNAME/ -R
@@ -39,8 +37,6 @@ cp -R usr debian/tmp/usr
 # Remove make calls
 grep -v makefile debian/rules > debian/rules.new 
 mv debian/rules.new debian/rules 
-
-dpkg-source --commit
 
 # debian/install must contain the list of scripts to install 
 # as well as the target directory
@@ -76,7 +72,7 @@ Description: A script for determining the carrier of a cell number by process
 rm debian/*.ex
 rm debian/*.EX
 
-dpkg-source --commit
+dpkg-source --commit . "$DEBVERSION"
 
 # Build the package.
 # You  will get a lot of warnings and ../somescripts_0.1-1_i386.deb
