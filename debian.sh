@@ -29,16 +29,16 @@ cd $DEBFOLDERNAME
 pwd
 
 # Create the packaging skeleton (debian/*)
-dh_make --indep --createorig 
+dh_make --indep --createorig
 
 mkdir -p debian/tmp/usr
 cp -R usr debian/tmp/usr
 
 # Remove make calls
-grep -v makefile debian/rules > debian/rules.new 
-mv debian/rules.new debian/rules 
+grep -v makefile debian/rules > debian/rules.new
+mv debian/rules.new debian/rules
 
-# debian/install must contain the list of scripts to install 
+# debian/install must contain the list of scripts to install
 # as well as the target directory
 echo usr/bin/$SOURCEBIN usr/bin >> debian/install
 echo usr/bin/$SOURCEDMN usr/bin >> debian/install
@@ -72,7 +72,7 @@ Description: A script for determining the carrier of a cell number by process
 rm debian/*.ex
 rm debian/*.EX
 
-dpkg-source --commit . "$DEBVERSION"
+#dpkg-source --commit . "$DEBVERSION"
 
 # Build the package.
 # You  will get a lot of warnings and ../somescripts_0.1-1_i386.deb
